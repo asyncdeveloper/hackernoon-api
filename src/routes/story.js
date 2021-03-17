@@ -9,6 +9,7 @@ const router = Router();
 router.post('/', verifyToken, storyCreateRules(), validate, StoryController.create);
 router.get('/', verifyToken,  StoryController.all);
 router.get('/:id', verifyToken, storyShowRules(), validate, StoryController.show);
+router.delete('/:id', verifyToken, storyShowRules(), validate, StoryController.delete);
 
 
 export default router;

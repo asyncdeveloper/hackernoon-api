@@ -55,6 +55,35 @@ class StoryController {
         }
     }
 
+    async delete(req, res, next) {
+        try {
+            const story = await firebaseAdmin.firestore()
+                .collection('stories')
+                .doc(req.params.id)
+                .get();
+
+            if (story.exists) {
+                if(story.data().creator === req.userId) {
+                    await firebaseAdmin.firestore()
+                        .collection('users')
+                        .doc(req.params.id)
+                        .delete();
+
+                    return res.status(HttpStatusCode.NO_CONTENT)
+                        .json({ message: "Story deleted successfully." });
+                }
+
+                return res.status(HttpStatusCode.FORBIDDEN)
+                    .json({ message: "Cannot delete resource" });
+            }
+
+            return res.status(HttpStatusCode.NOT_FOUND)
+                .json({ message: "Story does not exist" });
+        } catch (err) {
+            next(err);
+        }
+    }
+
 }
 
 export default new StoryController();
