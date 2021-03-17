@@ -45,11 +45,16 @@ class StoryController {
             const story = await firebaseAdmin.firestore()
                 .collection('stories')
                 .doc(req.params.id)
-                .get()
-                .data();
+                .get();
+
+            if (! story.exists)
+                return res.status(HttpStatusCode.NOT_FOUND).json({ message: "Story not found." });
+
+            if(story.data().creator !== req.userId && ! story.data().published)
+                return res.status(HttpStatusCode.NOT_FOUND).json({ message: "Story not found." });
 
             return res.status(HttpStatusCode.OK)
-                .json({ message: "Story fetched successfully.", story });
+                .json({ message: "Story fetched successfully.", story: story.data() });
         } catch (err) {
             next(err);
         }
@@ -65,7 +70,7 @@ class StoryController {
             if (story.exists) {
                 if(story.data().creator === req.userId) {
                     await firebaseAdmin.firestore()
-                        .collection('users')
+                        .collection('stories')
                         .doc(req.params.id)
                         .delete();
 
@@ -79,6 +84,32 @@ class StoryController {
 
             return res.status(HttpStatusCode.NOT_FOUND)
                 .json({ message: "Story does not exist" });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async update(req, res, next) {
+        try {
+            const story = await firebaseAdmin.firestore()
+                .collection('stories')
+                .doc(req.params.id)
+                .get();
+
+            if (!story.exists)
+                return res.status(HttpStatusCode.NOT_FOUND).json({ message: "Story does not exist" });
+
+            if(story.data().creator !== req.userId)
+                return res.status(HttpStatusCode.FORBIDDEN).json({ message: "Cannot update resource" });
+
+            const { title, markup, excerpt, tags, mainImage, wordCount, published } = req.body;
+            await firebaseAdmin.firestore()
+                .collection('stories')
+                .doc(req.params.id)
+                .update({ title, tags, excerpt, markup, mainImage, wordCount, published });
+
+            return res.status(HttpStatusCode.OK)
+                    .json({ message: "Story updated successfully." });
         } catch (err) {
             next(err);
         }
