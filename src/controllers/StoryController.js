@@ -18,6 +18,27 @@ class StoryController {
         }
     }
 
+    async all(req, res, next) {
+        try {
+           const stories =  await firebaseAdmin.firestore()
+                .collection('stories')
+                .where('published', '==', true)
+                .get();
+
+            let data = [];
+            for(const doc of stories.docs){
+                const item = doc.data();
+                item.id = doc.id
+                data.push(item);
+            }
+
+            return res.status(HttpStatusCode.OK)
+                .json({ message: "Stories fetched successfully.", stories: data });
+        } catch (err) {
+            next(err);
+        }
+    }
+
 }
 
 export default new StoryController();

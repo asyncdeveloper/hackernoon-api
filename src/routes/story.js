@@ -6,7 +6,8 @@ import StoryController from '../controllers/StoryController';
 
 const router = Router();
 
-router.post('/', [ verifyToken ] , storyCreateRules(), validate, StoryController.create);
+router.post('/', verifyToken, storyCreateRules(), validate, StoryController.create);
+router.get('/', verifyToken,  StoryController.all);
 
 
 export default router;
