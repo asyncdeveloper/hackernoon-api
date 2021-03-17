@@ -104,3 +104,4 @@ Temporary Items
 node_modules/
 permissions.json
 .env
+yarn.lock

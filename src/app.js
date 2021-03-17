@@ -3,6 +3,7 @@ import express from 'express';
 import helmet from 'helmet';
 
 import routes from './routes/index';
+import errors from './middlewares/errors';
 
 class App {
 
@@ -17,6 +18,7 @@ class App {
         this.express.use(express.json());
 
         this.express.use('/', routes);
+        this.express.use(errors);
     }
 }
 
