@@ -39,6 +39,22 @@ class StoryController {
         }
     }
 
+    async show(req, res, next) {
+        try {
+            //TODO:: show to only the owner if published is not true
+            const story = await firebaseAdmin.firestore()
+                .collection('stories')
+                .doc(req.params.id)
+                .get()
+                .data();
+
+            return res.status(HttpStatusCode.OK)
+                .json({ message: "Story fetched successfully.", story });
+        } catch (err) {
+            next(err);
+        }
+    }
+
 }
 
 export default new StoryController();

@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 export const storyCreateRules = () => {
     return [
@@ -10,5 +10,11 @@ export const storyCreateRules = () => {
         body('published').optional().isBoolean(),
         body('tags.*').optional().isString().isLength( { max: 100 }),
         body('mainImage').trim().optional().isString(),
+    ]
+};
+
+export const storyShowRules = () => {
+    return [
+        param('id').isString(),
     ]
 };
