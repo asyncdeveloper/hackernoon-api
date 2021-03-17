@@ -102,4 +102,5 @@ Temporary Items
 
 .idea/
 node_modules/
+permissions.json
 .env
